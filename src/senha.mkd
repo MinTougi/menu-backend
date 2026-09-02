@@ -1,0 +1,2 @@
+SENHA BANCO DE DADOS:
+    BancoMenuPRM2026
