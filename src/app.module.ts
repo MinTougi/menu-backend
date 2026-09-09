@@ -19,7 +19,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
           url: databaseURL,
           schema: dbSchema,
           autoLoadEntities: true,
-          syncronuze: true,
+          syncronize: true,
         }
       }
     })
