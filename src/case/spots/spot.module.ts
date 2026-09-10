@@ -11,4 +11,4 @@ import { SpotService } from "./spot.service";
     exports: [SpotService]
 })
 
-export class spotModule {}
+export class SpotModule {}

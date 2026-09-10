@@ -1,6 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ProductModule } from './case/products/product.module';
+import { CategoryModule } from './case/categories/category.module';
+import { SpotModule } from './case/spots/spot.module';
+import { GuestCheckModule } from './case/guest-checks/guest-check.module';
 
 @Module({
   imports: [
@@ -20,9 +24,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
           schema: dbSchema,
           autoLoadEntities: true,
           syncronize: true,
+          ssl: false
+
         }
       }
-    })
+    }),
+    CategoryModule,
+    ProductModule,
+    SpotModule,
+    GuestCheckModule
   ],
   controllers: [],
   providers: [],
