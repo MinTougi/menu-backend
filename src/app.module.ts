@@ -5,6 +5,7 @@ import { ProductModule } from './case/products/product.module';
 import { CategoryModule } from './case/categories/category.module';
 import { SpotModule } from './case/spots/spot.module';
 import { GuestCheckModule } from './case/guest-checks/guest-check.module';
+import { OrderModule } from './case/orders/order.module';
 
 @Module({
   imports: [
@@ -32,7 +33,8 @@ import { GuestCheckModule } from './case/guest-checks/guest-check.module';
     CategoryModule,
     ProductModule,
     SpotModule,
-    GuestCheckModule
+    GuestCheckModule,
+    OrderModule
   ],
   controllers: [],
   providers: [],

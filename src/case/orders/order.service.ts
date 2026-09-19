@@ -7,9 +7,19 @@ import { GuestCheckService } from "../guest-checks/guest-check.service";
 import { Repository } from "typeorm/browser/repository/Repository.js";
 import { InjectRepository } from "@nestjs/typeorm/dist/common/typeorm.decorators";
 import { ProductService } from "../products/product.service";
+import { UpdateOrderStatusDto } from "./dto/update-order-status";
 
 @Injectable()
 export class OrderService {
+    updateStatus(id: string, dto: UpdateOrderStatusDto): Promise<Order> {
+        throw new Error("Method not implemented.");
+    }
+    findOne(id: string): Promise<Order> {
+        throw new Error("Method not implemented.");
+    }
+    findAll(): Promise<Order[]> {
+        throw new Error("Method not implemented.");
+    }
     constructor(
         private readonly guestCheckService: GuestCheckService,
         private readonly productService: ProductService,
