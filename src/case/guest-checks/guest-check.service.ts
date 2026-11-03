@@ -22,7 +22,7 @@ export class GuestCheckService {
 
         // Regra #1: Não se abre comanda em mesa inexistente 
         const spot = await this.spotRepository.findOneBy({
-            id: dto.spotId,
+            id: dto.spotID,
             active: true
         });
 
@@ -32,7 +32,7 @@ export class GuestCheckService {
 
         // Regra #2: Não se abre comanda em mesa com comanda aberta.
         const opened = await this.GuestCheckRepository.exists({
-            where: { spot : { id: dto.spotId}, status: GuestCheckStatus.OPENED}
+            where: { spot : { id: dto.spotID}, status: GuestCheckStatus.OPENED}
         });
         if (opened) {
             throw new ConflictException('A mesa já possui uma comanda em aberto');
@@ -85,12 +85,12 @@ export class GuestCheckService {
         })
     }
 
-    async findOrCreateOpened(spotId: string): Promise<GuestCheck> {
-        const opened = await this.findOpenedBySpotId(spotId);
+    async findOrCreateOpened(spotID: string): Promise<GuestCheck> {
+        const opened = await this.findOpenedBySpotId(spotID);
         if (opened) {
             return opened;
         }
-        return this.create({ spotId });
+        return this.create({ spotID });
     }  
 
 }
