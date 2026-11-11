@@ -9,24 +9,24 @@ import { OrderModule } from './case/orders/order.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({isGlobal: true}),
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
         const databaseURL = configService.get<string>('DATABASE_URL');
-        const dbSchema = configService.get<string>('DATABASE_SCHEMA');
+        const dbSchema = configService.get<string>('DATABASE_SCHEMA', 'public');
 
-        if(!databaseURL) {
-          throw new Error('A variável de ambiente DATABASE_URL não foi encontrada.');
+        if (!databaseURL) {
+          throw new Error('A variável de ambiente DATABASE_URL não foi encontrada!');
         }
+
         return {
           type: 'postgres',
           url: databaseURL,
           schema: dbSchema,
           autoLoadEntities: true,
-          syncronize: true,
+          synchronize: true,
           ssl: false
-
         }
       }
     }),

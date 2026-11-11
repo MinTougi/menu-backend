@@ -5,9 +5,11 @@ import { GuestCheckController } from "./guest-check.controller";
 import { GuestCheckService } from "./guest-check.service";
 import { Spot } from "../spots/spot.entity";
 
+
 @Module({
-    imports: [TypeOrmModule.forFeature([Spot, GuestCheck])],
-    controllers: [GuestCheckController],
-    providers: [GuestCheckService],
+  imports: [TypeOrmModule.forFeature([Spot, GuestCheck])],
+  controllers: [GuestCheckController],
+  providers: [GuestCheckService],
+  exports: [GuestCheckService]
 })
-export class GuestCheckModule {}
+export class GuestCheckModule{}
