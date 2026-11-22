@@ -1,51 +1,52 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post } from "@nestjs/common/decorators";
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query } from "@nestjs/common";
 import { Product } from "./product.entity";
-import { HttpStatus, ParseUUIDPipe } from "@nestjs/common";
+import { ProductService } from "./product.service";
 import { CreateProductDto } from "./dto/create-product";
 import { UpdateProductDto } from "./dto/update-product";
-import { ProductService } from "./product.service";
 
-@Controller ('products')
+@Controller('products')
 export class ProductController {
 
-    constructor(
-        private readonly service: ProductService
-    ){}
+  constructor(
+    private readonly service: ProductService
+  ){}
 
-    @Get()
-    findAll(): Promise<Product[]> {
-        return this.service.findAll();
-    }
+  @Get()
+  findAll(
+    @Query('categoryId', new ParseUUIDPipe ({ optional: true })) categoryId?: string
+  ) : Promise<Product[]> {
+    return this.service.findAll(categoryId);
+  }
+  
+  @Get(':id')
+  findOne(
+    @Param('id', ParseUUIDPipe)
+    id: string
+  ) : Promise<Product> {
+    return this.service.findOne(id);
+  }
 
-    @Get(':id')
-    findOne(
-        @Param('id', ParseUUIDPipe)
-        id: string
-    ): Promise<Product> {
-        return this.service.findOne(id);
-    }
+  @Post()
+  create(@Body() dto: CreateProductDto): Promise<Product> {
+    return this.service.create(dto);
+  }
 
-    @Post()
-    create(dto: CreateProductDto): Promise<Product> {
-        return this.service.create(dto);
-    }
+  @Patch(':id')
+  update(
+    @Param('id', ParseUUIDPipe)
+    id: string, 
+    @Body()
+    dto: UpdateProductDto): Promise<Product> {
+    return this.service.update(id, dto);
+  }
 
-    @Patch(':id')
-    update(
-        @Param('id', ParseUUIDPipe)
-        id: string, 
-        @Body()
-        dto: UpdateProductDto,): Promise<Product> {
-            return this.service.update(id, dto);
-        }
-
-    @Delete(':id')
-    @HttpCode(HttpStatus.NO_CONTENT)
-        remove(
-            @Param('id', ParseUUIDPipe)
-            id: string
-        ): Promise<void> {
-            return this.service.remove(id);
-        }
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  remove(
+    @Param('id', ParseUUIDPipe)
+    id: string
+  ): Promise<void> {
+    return this.service.remove(id);
+  }
 
 }
