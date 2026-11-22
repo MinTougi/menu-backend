@@ -1,28 +1,27 @@
-import { Product } from "../../products/product.entity";
+import { Product } from "src/case/products/product.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Order } from "./order-entity";
 
-@Entity('order-item')
+@Entity('order_item')
 export class OrderItem {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
 
-    @ManyToOne(() => Product, {nullable: false})
-    @JoinColumn({name: 'product_id'})
-    product: Product;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @ManyToOne(() => Order, {nullable: false})
-    @JoinColumn({name: 'order_id'})
-    order: Order;
+  @ManyToOne(() => Order, (order) => order.items, {nullable: false})
+  @JoinColumn({ name: 'order_id' })
+  order: Order;
 
-    @Column({type:'integer'})
-    quantity: number;
+  @ManyToOne(() => Product, {nullable: false})
+  @JoinColumn({ name: 'product_id' })
+  product: Product;
 
-    @Column({type:'numeric', precision: 10, scale: 2})
-    price: number;
+  @Column({ type:'integer' })
+  quantity: number;
 
-    @Column({type:'numeric', precision: 10, scale: 2})
-    subtotal: number;
+  @Column({ type: 'numeric', precision: 10, scale: 2 })
+  price: number;
 
-
+  @Column({ type: 'numeric', precision: 10, scale: 2 })
+  subtotal: number;
 }

@@ -13,9 +13,10 @@ export class ProductController {
 
   @Get()
   findAll(
-    @Query('categoryId', new ParseUUIDPipe ({ optional: true })) categoryId?: string
+    @Query('categoryId', new ParseUUIDPipe ({ optional: true })) categoryId?: string,
+    @Query('includeInactive') includeInactive?: string
   ) : Promise<Product[]> {
-    return this.service.findAll(categoryId);
+    return this.service.findAll(categoryId, includeInactive === 'true');
   }
   
   @Get(':id')

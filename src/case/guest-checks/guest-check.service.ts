@@ -49,8 +49,26 @@ export class GuestCheckService {
 
   }
 
+  // Relações carregadas para o CMS: mesa + pedidos com itens e produtos
+  private readonly detailRelations = {
+    spot: true,
+    orders: { items: { product: true } }
+  };
+
+  findAll(status?: GuestCheckStatus): Promise<GuestCheck[]> {
+    return this.guestCheckRepository.find({
+      where: { ...(status && { status }) },
+      relations: this.detailRelations,
+      order: { createdAt: 'ASC', orders: { createdAt: 'ASC' } }
+    });
+  }
+
   async findOne(id: string): Promise<GuestCheck> {
-      const guestCheck = await this.guestCheckRepository.findOneBy({ id });
+      const guestCheck = await this.guestCheckRepository.findOne({
+        where: { id },
+        relations: this.detailRelations,
+        order: { orders: { createdAt: 'ASC' } }
+      });
   
       if (!guestCheck) {
         throw new NotFoundException('Comanda não encontrada!');
@@ -71,9 +89,9 @@ export class GuestCheckService {
     //TO_DO: Implementar isto depois (dívida técnica)
 
     // Se chegou aqui, deu certo!
-    guestCheck.status = GuestCheckStatus.CLOSED;
+    await this.guestCheckRepository.update(id, { status: GuestCheckStatus.CLOSED });
 
-    return this.guestCheckRepository.save(guestCheck);
+    return this.findOne(id);
   }
 
   findOpenedBySpotId(spotId:  string): Promise<GuestCheck | null> {

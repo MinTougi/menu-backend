@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Post } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Param, ParseUUIDPipe, Patch, Post, Query } from "@nestjs/common";
 import { GuestCheckService } from "./guest-check.service";
-import { GuestCheck } from "./guest-check.entity";
+import { GuestCheck, GuestCheckStatus } from "./guest-check.entity";
 import { CreateGuestCheckDto } from "./dto/create-guest-check";
 
 
@@ -10,6 +10,14 @@ export class GuestCheckController {
   constructor(
     private readonly service: GuestCheckService
   ){}
+
+  @Get()
+  findAll(@Query('status') status?: string): Promise<GuestCheck[]> {
+    if (status && !Object.values(GuestCheckStatus).includes(status as GuestCheckStatus)) {
+      throw new BadRequestException('Status inválido!');
+    }
+    return this.service.findAll(status as GuestCheckStatus | undefined);
+  }
 
   @Get(':id')
   findOne(

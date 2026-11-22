@@ -7,6 +7,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { ProductService } from "../products/product.service";
 import { UpdateOrderStatusDto } from "./dto/update-order-status";
+import { GuestCheckStatus } from "../guest-checks/guest-check.entity";
 
 @Injectable()
 export class OrderService {
@@ -59,14 +60,19 @@ export class OrderService {
     return this.orderRepository.save(order);    
   }
 
-  findAll(): Promise<Order[]> {
+  findAll(guestCheckStatus?: GuestCheckStatus): Promise<Order[]> {
     return this.orderRepository.find({
+      where: { ...(guestCheckStatus && { guestCheck: { status: guestCheckStatus } }) },
+      relations: { guestCheck: { spot: true }, items: { product: true } },
       order: { createdAt: 'ASC' }
     });
   }
 
   async findOne(id: string): Promise<Order> {
-    const order = await this.orderRepository.findOneBy({ id });
+    const order = await this.orderRepository.findOne({
+      where: { id },
+      relations: { guestCheck: { spot: true }, items: { product: true } }
+    });
 
     if (!order) {
       throw new NotFoundException('Pedido não encontrado!');
@@ -79,25 +85,17 @@ export class OrderService {
     id: string, 
     dto: UpdateOrderStatusDto
   ): Promise<Order> {
-    const order = await this.findOne(id);
+    // Garante que o pedido existe (404 caso contrário)
+    await this.findOne(id);
 
-    // Determino a sequencia obrigatoria de mudança de status
-    const nextStatus: Record<OrderStatus, OrderStatus | undefined> = {
-      [OrderStatus.NEW]: OrderStatus.PREPARING,
-      [OrderStatus.PREPARING]: OrderStatus.READY,
-      [OrderStatus.READY]: OrderStatus.DELIVERY,
-      [OrderStatus.DELIVERY]: undefined
-    }
-
-    // Verifico se o client está enviando um status válido
-    if (nextStatus[dto.status] !== dto.status) {
+    // Transições livres: qualquer status -> qualquer status (validado pelo enum)
+    if (!Object.values(OrderStatus).includes(dto.status)) {
       throw new BadRequestException('Status inválido!');
     }
 
-    // Forço a mudança de status
-    order.status = dto.status
+    // Grava somente o status, sem regravar itens
+    await this.orderRepository.update(id, { status: dto.status });
 
-    // Grava alteração no banco
-    return this.orderRepository.save(order);
+    return this.findOne(id);
   }
 }
