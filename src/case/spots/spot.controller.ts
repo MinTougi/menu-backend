@@ -26,9 +26,11 @@ export class SpotController {
     }
 
     @Post()
-    create(dto: CreateSpotDto): Promise<Spot> {
+        create(
+        @Body() dto: CreateSpotDto
+        ): Promise<Spot> {
         return this.service.create(dto);
-    }
+        }
 
     @Patch(':id')
     update(
